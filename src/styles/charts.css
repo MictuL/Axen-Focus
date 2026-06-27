@@ -1,4 +1,23 @@
+/* ============================================================================
+   AXEN FOCUS · CHARTS.CSS
+   Gráficas, leyendas, filtros y lectura visual de tendencias y condiciones.
+
+   Tokens de color/tipografía/espaciado: src/styles/base.css
+   ----------------------------------------------------------------------------
+   CÓMO NAVEGAR: busca el marcador  [charts · NN]  para saltar a una sección.
+
+   ÍNDICE
+     [charts · 01]  ENCABEZADO, FILTROS Y CONTENEDOR DE GRÁFICAS
+     [charts · 02]  GRÁFICA DE OPERACIÓN / FOCUS
+     [charts · 03]  TENDENCIA DE CONDICIONES
+     [charts · 04]  TENDENCIA JERÁRQUICA Y CADENCIA
+     [charts · 05]  RESUMEN, DISTRIBUCIÓN E INDICADORES
+   ============================================================================ */
 /* Charts: chart wrappers, trend readouts, zoom controls and graph-specific UI. */
+
+
+/* ▓▓▓▓▓▓▓▓▓▓  [charts · 01]  ENCABEZADO, FILTROS Y CONTENEDOR DE GRÁFICAS  ▓▓▓▓▓▓▓▓▓▓
+   Título, perfil, filtros y contenedor de la gráfica. */
 
 .chart-heading {
   align-items: flex-start;
@@ -94,6 +113,10 @@
   border-color: rgba(228, 189, 97, 0.28);
 }
 
+
+/* ▓▓▓▓▓▓▓▓▓▓  [charts · 02]  GRÁFICA DE OPERACIÓN / FOCUS  ▓▓▓▓▓▓▓▓▓▓
+   Gráfica de operación y validación Focus. */
+
 .operation-focus-chart .chart-wrap {
   min-height: 260px;
 }
@@ -162,6 +185,10 @@
   letter-spacing: 0;
   text-transform: none;
 }
+
+
+/* ▓▓▓▓▓▓▓▓▓▓  [charts · 03]  TENDENCIA DE CONDICIONES  ▓▓▓▓▓▓▓▓▓▓
+   Tendencia y método de lectura de condiciones. */
 
 .trend-condition-guide {
   display: grid;
@@ -246,6 +273,10 @@
   font-size: 10px;
   line-height: 1.45;
 }
+
+
+/* ▓▓▓▓▓▓▓▓▓▓  [charts · 04]  TENDENCIA JERÁRQUICA Y CADENCIA  ▓▓▓▓▓▓▓▓▓▓
+   Tendencia por jerarquía y cadencia de la gráfica. */
 
 .hierarchy-trend-chart {
   min-width: 0;
@@ -396,6 +427,10 @@
       grid-template-columns: 1fr;
     }
 }
+
+
+/* ▓▓▓▓▓▓▓▓▓▓  [charts · 05]  RESUMEN, DISTRIBUCIÓN E INDICADORES  ▓▓▓▓▓▓▓▓▓▓
+   Resumen, distribución de estatus e indicadores. */
 
 .chart-summary {
   display: grid;

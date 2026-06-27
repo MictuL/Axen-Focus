@@ -1,4 +1,30 @@
+/* ============================================================================
+   AXEN FOCUS · FORMS.CSS
+   Controles de entrada: inputs, selects, textareas, botones heredados,
+   formularios de evaluación, metas/objetivos y tablas de captura.
+
+   Tokens de color/tipografía/espaciado: src/styles/base.css
+   ----------------------------------------------------------------------------
+   CÓMO NAVEGAR: busca el marcador  [forms · NN]  para saltar a una sección.
+
+   ÍNDICE
+     [forms · 01]  FORMULARIO DE LOGIN E INPUTS DE TEXTO
+     [forms · 02]  SELECTS Y CONTROLES BASE
+     [forms · 03]  FORMULARIO DE EVALUACIÓN
+     [forms · 04]  CAPTURA DE OPERACIÓN (INPUTS)
+     [forms · 05]  MODO DE FORMATO Y CATÁLOGO
+     [forms · 06]  ADMIN · INDICADORES Y RELACIONES
+     [forms · 07]  METAS Y OBJETIVOS (GOALS)
+     [forms · 08]  FÓRMULA FOCUS
+     [forms · 09]  PANEL DE REINICIO DE EVALUACIONES
+     [forms · 10]  ADMIN KPI Y FÓRMULAS DE CONDICIÓN
+     [forms · 11]  DESCARGA DE FORMATOS Y VALORES DE DOCUMENTO
+   ============================================================================ */
 /* Forms: inputs, wizard capture, tables used as editors and admin forms. */
+
+
+/* ▓▓▓▓▓▓▓▓▓▓  [forms · 01]  FORMULARIO DE LOGIN E INPUTS DE TEXTO  ▓▓▓▓▓▓▓▓▓▓
+   Form de acceso y textareas base. */
 
 .login-form label {
   display: grid;
@@ -50,6 +76,10 @@ textarea {
   width: 100%;
   min-height: 42px;
 }
+
+
+/* ▓▓▓▓▓▓▓▓▓▓  [forms · 02]  SELECTS Y CONTROLES BASE  ▓▓▓▓▓▓▓▓▓▓
+   Selects y controles compartidos de jerarquía. */
 
 .home-unit-card.is-selected {
   border-color: rgba(0, 113, 206, 0.35);
@@ -126,6 +156,10 @@ textarea {
   width: 100%;
   min-height: 36px;
 }
+
+
+/* ▓▓▓▓▓▓▓▓▓▓  [forms · 03]  FORMULARIO DE EVALUACIÓN  ▓▓▓▓▓▓▓▓▓▓
+   Form de evaluación: grids, toggle de sujeto, preview y fórmula de score. */
 
 .evaluation-form {
   padding: 23px;
@@ -259,6 +293,10 @@ textarea {
 }
 
 .operation-input-grid,
+
+/* ▓▓▓▓▓▓▓▓▓▓  [forms · 04]  CAPTURA DE OPERACIÓN (INPUTS)  ▓▓▓▓▓▓▓▓▓▓
+   Inputs de la captura operativa (preguntas, tabla, semáforo). */
+
 .operation-question-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -343,6 +381,10 @@ textarea {
   color: var(--ink-deep);
 }
 
+
+/* ▓▓▓▓▓▓▓▓▓▓  [forms · 05]  MODO DE FORMATO Y CATÁLOGO  ▓▓▓▓▓▓▓▓▓▓
+   Selector de modo de formato, switcher de unidad y tags. */
+
 .format-mode-toggle {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -426,6 +468,10 @@ textarea {
   font-size: 10px;
   line-height: 1.35;
 }
+
+
+/* ▓▓▓▓▓▓▓▓▓▓  [forms · 06]  ADMIN · INDICADORES Y RELACIONES  ▓▓▓▓▓▓▓▓▓▓
+   Forms de admin para indicadores y relaciones. */
 
 .admin-form {
   height: fit-content;
@@ -597,6 +643,10 @@ textarea {
   background: #fff0ee;
   border-color: #efc6c1;
 }
+
+
+/* ▓▓▓▓▓▓▓▓▓▓  [forms · 07]  METAS Y OBJETIVOS (GOALS)  ▓▓▓▓▓▓▓▓▓▓
+   Asignación de metas, objetivos compartidos y progreso. */
 
 .active-goal-line {
   display: flex;
@@ -1144,6 +1194,10 @@ textarea {
   min-width: 0;
 }
 
+
+/* ▓▓▓▓▓▓▓▓▓▓  [forms · 08]  FÓRMULA FOCUS  ▓▓▓▓▓▓▓▓▓▓
+   Bloque de fórmula del Focus diario. */
+
 .focus-formula-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -1184,6 +1238,10 @@ textarea {
   font-size: 11px;
   line-height: 1.5;
 }
+
+
+/* ▓▓▓▓▓▓▓▓▓▓  [forms · 09]  PANEL DE REINICIO DE EVALUACIONES  ▓▓▓▓▓▓▓▓▓▓
+   Panel de reset de evaluaciones (acción sensible). */
 
 .evaluation-reset-panel {
   display: grid;
@@ -1379,6 +1437,10 @@ textarea {
 
 .admin-inner-form,
 .admin-new-unit,
+
+/* ▓▓▓▓▓▓▓▓▓▓  [forms · 10]  ADMIN KPI Y FÓRMULAS DE CONDICIÓN  ▓▓▓▓▓▓▓▓▓▓
+   KPI de admin y fórmulas de condición/seguimiento. */
+
 .admin-kpi-list {
   display: grid;
   gap: 11px;
@@ -1462,6 +1524,10 @@ textarea {
 .condition-followup-grid input {
   min-height: 30px;
 }
+
+
+/* ▓▓▓▓▓▓▓▓▓▓  [forms · 11]  DESCARGA DE FORMATOS Y VALORES DE DOCUMENTO  ▓▓▓▓▓▓▓▓▓▓
+   Bloque de descarga de formatos y valores de documento. */
 
 .download-format-button {
   display: inline-flex;

@@ -1,28 +1,155 @@
-/* Base: tokens, reset, global typography and motion primitives. */
+/* ============================================================================
+   AXEN FOCUS · BASE.CSS · SISTEMA DE TOKENS DE DISEÑO
+   ============================================================================
+
+   QUÉ ES ESTE ARCHIVO (leer primero)
+   ----------------------------------
+   Esta es la ÚNICA fuente de verdad del lenguaje visual de Axen Focus:
+   color, tipografía, radios, sombras, espaciado y movimiento.
+
+   Para el UX/UI:
+   - Cambiar un valor AQUÍ se propaga a TODA la app de forma consistente.
+     Ejemplo: cambia `--color-brand` y se actualizan botones, enlaces,
+     acentos, gráficas y semáforos azules en todas las pantallas.
+   - NO edites colores sueltos dentro de components.css / forms.css / etc.
+     Esos archivos deben consumir estos tokens, no inventar tonos nuevos.
+   - Cada token tiene un comentario que dice QUÉ controla y DÓNDE se ve.
+
+   CÓMO ESTÁ ORGANIZADO
+   --------------------
+   1. Tipografía            (familias de fuente)
+   2. Color · Marca         (azul Axen)
+   3. Color · Tinta/Texto   (textos)
+   4. Color · Superficies   (fondos de tarjetas y paneles)
+   5. Color · Líneas        (bordes y separadores)
+   6. Color · Estado        (verde/ámbar/rojo + acento)
+   7. Color · Apoyo         (azul claro de realce)
+   8. Radios                (esquinas redondeadas)
+   9. Controles             (altura de inputs/botones)
+   10. Sombras
+   11. Movimiento           (curvas de animación)
+   12. Espaciado            (escala nueva — recomendada)
+   13. Escala tipográfica   (escala nueva — recomendada)
+
+   NOTA SOBRE NOMBRES HEREDADOS (importante)
+   -----------------------------------------
+   Por historia del proyecto algunos tokens tienen nombre engañoso:
+   - `--orange`      en realidad es AZUL (el azul de marca). Se conserva el
+                     nombre para no romper el CSS existente, pero el nombre
+                     correcto y recomendado es `--color-brand`.
+   - `--orange-deep` es el azul oscuro de marca → usa `--color-brand-strong`.
+   - `--lime`        es un AZUL CLARO de realce, no verde → `--color-accent-soft`.
+   Los nombres viejos y los nuevos apuntan AL MISMO valor, así que puedes
+   migrar poco a poco sin riesgo.
+
+   TOKENS QUE SE REPARARON EN ESTA VERSIÓN
+   ---------------------------------------
+   `--body-font`, `--accent` y `--blue` se USABAN en el CSS pero nunca se
+   habían definido (caían a un valor por defecto). Aquí ya están definidos
+   con su valor correcto. Si notas que algún texto/borde antes "gris" ahora
+   se ve azul, es porque finalmente está tomando el acento que le tocaba.
+   ========================================================================== */
 
 :root {
+  /* Aplicados directamente al documento (color de texto y fondo base). */
   color: #14213d;
   background: #eef4f9;
-  font-family: "Aptos", "Segoe UI", "Helvetica Neue", sans-serif;
+  font-family: var(--body-font);
   font-synthesis: none;
   text-rendering: optimizeLegibility;
+
+  /* ── 1. TIPOGRAFÍA ──────────────────────────────────────────────────────
+     --body-font     Fuente de TODO el cuerpo de texto (la que más se ve).
+     --display-font  Fuente para títulos grandes / encabezados destacados.
+     Para cambiar la tipografía de la app, cambia estas dos líneas. */
+  --body-font: "Aptos", "Segoe UI", "Helvetica Neue", sans-serif;
   --display-font: "Aptos Display", "Segoe UI", "Helvetica Neue", sans-serif;
+
+  /* ── 2. COLOR · MARCA ───────────────────────────────────────────────────
+     El azul institucional Axen. Es el acento primario de la plataforma:
+     botones principales, enlaces, estados activos, líneas de gráfica.
+     Nombres nuevos (recomendados) y nombres heredados apuntan al mismo valor. */
+  --color-brand: #0071ce;          /* azul Axen — acento primario */
+  --color-brand-strong: #004f9f;   /* azul oscuro — hover/pressed, énfasis */
+
+  --orange: var(--color-brand);        /* LEGADO: es azul, no naranja */
+  --orange-deep: var(--color-brand-strong); /* LEGADO: azul oscuro */
+  --axen-blue: var(--color-brand);     /* alias explícito de marca */
+  --accent: var(--color-brand);        /* REPARADO: acento de iconos y detalles */
+  --blue: var(--color-brand);          /* REPARADO: bordes azules puntuales */
+
+  /* ── 3. COLOR · TINTA / TEXTO ───────────────────────────────────────────
+     --ink       Color de texto principal (párrafos, etiquetas).
+     --ink-deep  Texto de mayor jerarquía (títulos, números fuertes).
+     --muted     Texto secundario / ayudas / placeholders. */
   --ink: #14213d;
   --ink-deep: #061a33;
+  --muted: #65758b;
+
+  /* ── 4. COLOR · SUPERFICIES ─────────────────────────────────────────────
+     Fondos de los contenedores. De más blanco a más teñido.
+     --paper     Fondo de tarjetas/paneles principales (blanco puro).
+     --paper-2   Fondo sutil para zonas secundarias dentro de una tarjeta.
+     La escala --surface-* es nueva y consolida los muchos azules pálidos
+     casi idénticos que hoy están repartidos por el CSS. Úsala para unificar. */
   --paper: #ffffff;
   --paper-2: #f5f9fc;
+  --surface-1: #f8fbfe;   /* el más claro */
+  --surface-2: #f5f9fc;   /* = --paper-2 */
+  --surface-3: #eef4f9;   /* fondo de la app */
+  --surface-4: #e9f1f8;   /* zonas hundidas / deshabilitadas */
+
+  /* ── 5. COLOR · LÍNEAS / BORDES ─────────────────────────────────────────
+     --line           Borde y separador estándar (el más usado de la app).
+     --surface-border  Borde de tarjetas elevadas (mismo tono, alias claro). */
   --line: #d8e4ef;
-  --muted: #65758b;
-  --orange: #0071ce;
-  --orange-deep: #004f9f;
-  --lime: #d7ecff;
+  --surface-border: #d9e5ef;
+
+  /* ── 6. COLOR · ESTADO / SEMÁNTICA ──────────────────────────────────────
+     Colores que comunican significado. Se usan en semáforos, badges de
+     condición y validaciones.
+     --green  OK / dentro de meta / Normal-Afluencia.
+     --gold   advertencia / pendiente / Emergencia.
+     --red    error / fuera de meta / Peligro-Inexistencia. */
+  --green: #278461;
   --gold: #b88418;
   --red: #c94b4b;
-  --axen-blue: #0071ce;
-  --green: #278461;
+
+  /* ── 7. COLOR · APOYO ───────────────────────────────────────────────────
+     Azul muy claro para realces suaves (fondos de chip activo, hover leve). */
+  --color-accent-soft: #d7ecff;
+  --lime: var(--color-accent-soft);   /* LEGADO: es azul claro, no lima */
+
+  /* ── 10. SOMBRAS (global) ───────────────────────────────────────────────
+     --shadow  Sombra base de elevación. Las variantes screen-only están
+     más abajo (solo aplican en pantalla, no en impresión). */
   --shadow: 0 18px 48px rgba(6, 26, 51, 0.08);
+
+  /* ── 12. ESPACIADO (escala nueva — recomendada) ─────────────────────────
+     Escala de 4px. Hoy el CSS usa medidas sueltas (10px, 14px, 18px…).
+     Para nuevas reglas usa estos tokens y el ritmo vertical será consistente.
+     --space-1=4 · 2=8 · 3=12 · 4=16 · 5=20 · 6=24 · 8=32 · 10=40 · 12=48 */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.25rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+  --space-10: 2.5rem;
+  --space-12: 3rem;
+
+  /* ── 13. ESCALA TIPOGRÁFICA (escala nueva — recomendada) ─────────────────
+     Tamaños de texto sugeridos para mantener jerarquía pareja. */
+  --text-xs: 0.75rem;    /* 12px — etiquetas, captions */
+  --text-sm: 0.8125rem;  /* 13px — ayudas, metadatos */
+  --text-base: 0.9375rem;/* 15px — cuerpo */
+  --text-md: 1.0625rem;  /* 17px — subtítulos */
+  --text-lg: 1.375rem;   /* 22px — títulos de sección */
+  --text-xl: 1.875rem;   /* 30px — títulos de pantalla */
 }
 
+/* Reset mínimo: caja predecible y cuerpo a pantalla completa. */
 * {
   box-sizing: border-box;
 }
@@ -33,90 +160,68 @@ body {
   min-height: 100vh;
 }
 
+/* ============================================================================
+   TOKENS Y ANIMACIONES SOLO-PANTALLA  (@media screen)
+   ----------------------------------------------------------------------------
+   Estos valores NO aplican al imprimir (la hoja impresa usa su propio estilo
+   en print.css). Aquí viven radios, alturas de control, sombras de elevación
+   y las curvas/keyframes de animación.
+   ========================================================================== */
 @media screen {
   :root {
-      --radius-sm: 6px;
-      --radius-md: 8px;
-      --control-height: 42px;
-      --ease-out: cubic-bezier(0.2, 0.8, 0.2, 1);
-      --surface-border: #d9e5ef;
-      --subtle-shadow: 0 10px 28px rgba(6, 26, 51, 0.055);
-      --raised-shadow: 0 18px 42px rgba(6, 26, 51, 0.11);
-    }
+    /* ── 8. RADIOS — esquinas redondeadas ── */
+    --radius-sm: 6px;   /* inputs, chips, botones pequeños */
+    --radius-md: 8px;   /* tarjetas y paneles */
 
+    /* ── 9. CONTROLES — dimensiones de inputs/botones ── */
+    --control-height: 42px;        /* alto de inputs y botones estándar */
+    --format-toggle-height: 46px;  /* alto del selector de formato */
+    --print-action-width: 176px;   /* ancho de los botones de impresión */
+
+    /* ── 10. SOMBRAS solo-pantalla ── */
+    --subtle-shadow: 0 10px 28px rgba(6, 26, 51, 0.055); /* elevación ligera */
+    --raised-shadow: 0 18px 42px rgba(6, 26, 51, 0.11);  /* elevación fuerte */
+
+    /* ── 11. MOVIMIENTO — curva de salida estándar ── */
+    --ease-out: cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+
+  /* Fondo degradado suave de la app (solo en pantalla). */
   body {
-      background:
-        linear-gradient(180deg, #f6f9fc 0%, #eef4f9 58%, #edf3f7 100%);
-    }
+    background:
+      linear-gradient(180deg, #f6f9fc 0%, #eef4f9 58%, #edf3f7 100%);
+  }
 
+  /* Animaciones reutilizables. Para desactivar/animar distinto, edita aquí. */
   @keyframes view-enter {
-      from {
-        opacity: 0;
-        transform: translateY(8px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-
-  @media (prefers-reduced-motion: reduce) {
-      *,
-      *::before,
-      *::after {
-        animation-duration: 1ms !important;
-        scroll-behavior: auto !important;
-        transition-duration: 1ms !important;
-      }
-    }
-}
-
-@media screen {
-  :root {
-      --print-action-width: 176px;
-      --format-toggle-height: 46px;
-    }
+    from { opacity: 0; transform: translateY(8px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
 
   @keyframes view-enter-polished {
-      0% {
-        opacity: 0;
-        transform: translateY(14px) scale(0.992);
-        filter: blur(3px);
-      }
-      70% {
-        opacity: 1;
-        transform: translateY(-1px) scale(1);
-        filter: blur(0);
-      }
-      100% {
-        opacity: 1;
-        transform: translateY(0) scale(1);
-        filter: blur(0);
-      }
-    }
-}
+    0%   { opacity: 0; transform: translateY(14px) scale(0.992); filter: blur(3px); }
+    70%  { opacity: 1; transform: translateY(-1px) scale(1);     filter: blur(0); }
+    100% { opacity: 1; transform: translateY(0) scale(1);        filter: blur(0); }
+  }
 
-@media screen {
   @keyframes notice-pop {
-      from {
-        opacity: 0;
-        transform: translateY(-6px) scale(0.98);
-      }
-
-      to {
-        opacity: 1;
-        transform: translateY(0) scale(1);
-      }
-    }
+    from { opacity: 0; transform: translateY(-6px) scale(0.98); }
+    to   { opacity: 1; transform: translateY(0) scale(1); }
+  }
 
   @keyframes wizard-enter {
-      from {
-        opacity: 0;
-        transform: translateX(8px);
-      }
-      to {
-        opacity: 1;
-        transform: translateX(0);
-      }
+    from { opacity: 0; transform: translateX(8px); }
+    to   { opacity: 1; transform: translateX(0); }
+  }
+
+  /* Accesibilidad: respeta "reducir movimiento" del sistema operativo. */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 1ms !important;
+      scroll-behavior: auto !important;
+      transition-duration: 1ms !important;
     }
+  }
 }

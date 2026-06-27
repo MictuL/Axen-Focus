@@ -1,4 +1,31 @@
+/* ============================================================================
+   AXEN FOCUS · LAYOUT.CSS
+   Estructura de la aplicación: shell, sidebar, topbar, login, inicio,
+   rejillas de página y el armazón responsive de cada vista.
+
+   Tokens de color/tipografía/espaciado: src/styles/base.css
+   ----------------------------------------------------------------------------
+   CÓMO NAVEGAR: busca el marcador  [layout · NN]  para saltar a una sección.
+
+   ÍNDICE
+     [layout · 01]  ÁRBOL DE EQUIPO Y CONTEXTO LATERAL
+     [layout · 02]  PANTALLA DE ACCESO (LOGIN)
+     [layout · 03]  ESTRUCTURA GLOBAL · SHELL · SIDEBAR · TOPBAR
+     [layout · 04]  ENCABEZADO DE CONTENIDO (HERO / START)
+     [layout · 05]  INICIO / HOME · TARJETAS DE UNIDADES Y MÓDULOS
+     [layout · 06]  ENCABEZADOS Y REJILLAS (GRID) DE SECCIÓN
+     [layout · 07]  LISTA Y TARJETAS DE PUESTOS (ROLES)
+     [layout · 08]  ESTUDIO DE OPERACIÓN · CAPTURA POR PUESTO
+     [layout · 09]  ADMINISTRACIÓN · PORTAFOLIO DE UNIDAD
+     [layout · 10]  DETALLE DE PUESTO Y BLOQUES DE ADMIN
+     [layout · 11]  MÉTRICAS E INDICADORES POR PUESTO
+     [layout · 12]  CONFIGURACIÓN DE FOCUS Y CONDICIONES
+   ============================================================================ */
 /* Layout: app shell, navigation, page structure and responsive placement. */
+
+
+/* ▓▓▓▓▓▓▓▓▓▓  [layout · 01]  ÁRBOL DE EQUIPO Y CONTEXTO LATERAL  ▓▓▓▓▓▓▓▓▓▓
+   Panel lateral de equipo y resumen de jerarquía. */
 
 .sidebar-context small {
   display: block;
@@ -160,6 +187,10 @@
     }
 }
 
+
+/* ▓▓▓▓▓▓▓▓▓▓  [layout · 02]  PANTALLA DE ACCESO (LOGIN)  ▓▓▓▓▓▓▓▓▓▓
+   Layout de la pantalla de entrada. */
+
 .login-page {
   display: grid;
   min-height: 100vh;
@@ -182,6 +213,10 @@
   border-radius: 8px;
   box-shadow: 0 24px 70px rgba(6, 26, 51, 0.14);
 }
+
+
+/* ▓▓▓▓▓▓▓▓▓▓  [layout · 03]  ESTRUCTURA GLOBAL · SHELL · SIDEBAR · TOPBAR  ▓▓▓▓▓▓▓▓▓▓
+   Armazón fijo: navegación lateral, marca, barra superior y área de contenido. */
 
 .app-shell {
   display: flex;
@@ -338,6 +373,10 @@
   display: none;
 }
 
+
+/* ▓▓▓▓▓▓▓▓▓▓  [layout · 04]  ENCABEZADO DE CONTENIDO (HERO / START)  ▓▓▓▓▓▓▓▓▓▓
+   Cabecera de cada vista y panel de inicio de captura. */
+
 .content-wrap {
   max-width: 1600px;
   padding: 26px 28px 48px;
@@ -397,6 +436,10 @@
   font-size: 12px;
   line-height: 1.55;
 }
+
+
+/* ▓▓▓▓▓▓▓▓▓▓  [layout · 05]  INICIO / HOME · TARJETAS DE UNIDADES Y MÓDULOS  ▓▓▓▓▓▓▓▓▓▓
+   Tablero principal: accesos a unidades de negocio y módulos. */
 
 .unit-dashboard-actions {
   display: flex;
@@ -712,6 +755,10 @@
   font-size: 18px;
 }
 
+
+/* ▓▓▓▓▓▓▓▓▓▓  [layout · 06]  ENCABEZADOS Y REJILLAS (GRID) DE SECCIÓN  ▓▓▓▓▓▓▓▓▓▓
+   Títulos de sección y los grids (kpi, dashboard, captura, filtros). */
+
 .section-heading {
   margin: 24px 0 12px;
 }
@@ -755,6 +802,10 @@
 .filters-grid {
   grid-template-columns: repeat(5, minmax(0, 1fr));
 }
+
+
+/* ▓▓▓▓▓▓▓▓▓▓  [layout · 07]  LISTA Y TARJETAS DE PUESTOS (ROLES)  ▓▓▓▓▓▓▓▓▓▓
+   Listado y tarjeta de cada puesto del organigrama. */
 
 .role-list {
   display: grid;
@@ -818,6 +869,10 @@
   font-size: 11px;
   line-height: 1.35;
 }
+
+
+/* ▓▓▓▓▓▓▓▓▓▓  [layout · 08]  ESTUDIO DE OPERACIÓN · CAPTURA POR PUESTO  ▓▓▓▓▓▓▓▓▓▓
+   Vista de captura operativa por puesto/rol. */
 
 .operation-studio-sidebar {
   position: sticky;
@@ -1042,6 +1097,10 @@
 }
 
 .unit-switcher,
+
+/* ▓▓▓▓▓▓▓▓▓▓  [layout · 09]  ADMINISTRACIÓN · PORTAFOLIO DE UNIDAD  ▓▓▓▓▓▓▓▓▓▓
+   Pantallas de admin: portafolio y flujo de la unidad. */
+
 .admin-intro {
   display: flex;
   gap: 20px;
@@ -1138,6 +1197,10 @@
   background: #bdc9c4;
 }
 
+
+/* ▓▓▓▓▓▓▓▓▓▓  [layout · 10]  DETALLE DE PUESTO Y BLOQUES DE ADMIN  ▓▓▓▓▓▓▓▓▓▓
+   Detalle de puesto y contenedores de administración. */
+
 .lower-grid {
   margin-top: 14px;
 }
@@ -1211,6 +1274,10 @@
 }
 
 .relationship-admin,
+
+/* ▓▓▓▓▓▓▓▓▓▓  [layout · 11]  MÉTRICAS E INDICADORES POR PUESTO  ▓▓▓▓▓▓▓▓▓▓
+   Hero, grid y score de indicadores por puesto. */
+
 .indicator-metrics {
   display: grid;
   gap: 14px;
@@ -1311,6 +1378,10 @@
   display: grid;
   gap: 14px;
 }
+
+
+/* ▓▓▓▓▓▓▓▓▓▓  [layout · 12]  CONFIGURACIÓN DE FOCUS Y CONDICIONES  ▓▓▓▓▓▓▓▓▓▓
+   Config de Focus diario y bloques de condición. */
 
 .focus-config-grid {
   grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));

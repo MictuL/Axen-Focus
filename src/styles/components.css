@@ -1,4 +1,38 @@
+/* ============================================================================
+   AXEN FOCUS · COMPONENTS.CSS
+   Componentes vivos de producto: tarjetas, paneles, alertas, tablas
+   informativas, badges de condición, semáforos y bloques de resultado.
+
+   Tokens de color/tipografía/espaciado: src/styles/base.css
+   ----------------------------------------------------------------------------
+   CÓMO NAVEGAR: busca el marcador  [components · NN]  para saltar a una sección.
+
+   ÍNDICE
+     [components · 01]  ACCESO / LOGIN (COMPONENTES)
+     [components · 02]  MARCA Y SESIÓN
+     [components · 03]  TIPOGRAFÍA DE APOYO Y BOTONES (LEGADO)
+     [components · 04]  TARJETAS KPI
+     [components · 05]  PANELES Y ALERTAS
+     [components · 06]  TABLERO FOCUS (RESUMEN)
+     [components · 07]  CONDICIONES Y JERARQUÍA (LECTURA)
+     [components · 08]  AYUDAS DE PRODUCTO Y ESTADÍSTICAS
+     [components · 09]  CLAVE DE CONDICIONES Y CHECKLIST DIGITAL
+     [components · 10]  PUNTAJES E INDICADORES (RESULTADOS)
+     [components · 11]  TABLAS INFORMATIVAS
+     [components · 12]  ESTADOS VACÍOS Y ANALÍTICA
+     [components · 13]  OPERACIÓN · CAPTURA, FOCUS Y SEMÁFOROS
+     [components · 14]  REP, DISTRIBUCIÓN Y RANKING
+     [components · 15]  RELACIONES JERÁRQUICAS (ADMIN)
+     [components · 16]  INDICADORES POR PUESTO (DETALLE)
+     [components · 17]  ADMIN DE FOCUS Y ACCIONES DE RIESGO
+     [components · 18]  ESTADÍSTICA DE CONDICIÓN Y GUÍA DE OPERACIÓN
+     [components · 19]  CAMPOS DE DOCUMENTO Y VALIDACIÓN FOCUS
+   ============================================================================ */
 /* Components: reusable cards, badges, buttons, panels and domain widgets. */
+
+
+/* ▓▓▓▓▓▓▓▓▓▓  [components · 01]  ACCESO / LOGIN (COMPONENTES)  ▓▓▓▓▓▓▓▓▓▓
+   Piezas visuales del login (copys, logo, error). */
 
 .login-access-fields {
   display: grid;
@@ -87,6 +121,10 @@ button {
   font-weight: 700;
 }
 
+
+/* ▓▓▓▓▓▓▓▓▓▓  [components · 02]  MARCA Y SESIÓN  ▓▓▓▓▓▓▓▓▓▓
+   Logo de marca y botón de cerrar sesión. */
+
 .brand-logo {
   width: min(178px, 100%);
   height: auto;
@@ -107,6 +145,10 @@ button {
 .logout-button:hover {
   color: white;
 }
+
+
+/* ▓▓▓▓▓▓▓▓▓▓  [components · 03]  TIPOGRAFÍA DE APOYO Y BOTONES (LEGADO)  ▓▓▓▓▓▓▓▓▓▓
+   Eyebrow, títulos y botones heredados (ver ui/Button.tsx para el nuevo). */
 
 .eyebrow {
   margin: 0 0 7px;
@@ -210,6 +252,10 @@ h3 {
   align-items: end;
 }
 
+
+/* ▓▓▓▓▓▓▓▓▓▓  [components · 04]  TARJETAS KPI  ▓▓▓▓▓▓▓▓▓▓
+   Tarjetas de indicador clave del dashboard. */
+
 .kpi-card {
   padding: 18px;
   background: var(--paper);
@@ -275,6 +321,10 @@ h3 {
 .compact-distribution .status-distribution article {
   min-height: 42px;
 }
+
+
+/* ▓▓▓▓▓▓▓▓▓▓  [components · 05]  PANELES Y ALERTAS  ▓▓▓▓▓▓▓▓▓▓
+   Panel base, encabezados y lista de alertas. */
 
 .panel {
   padding: 20px;
@@ -356,6 +406,10 @@ h3 {
   grid-column: 1 / -1;
   margin-top: 14px;
 }
+
+
+/* ▓▓▓▓▓▓▓▓▓▓  [components · 06]  TABLERO FOCUS (RESUMEN)  ▓▓▓▓▓▓▓▓▓▓
+   Resumen Focus: semanal, causas y actividad reciente. */
 
 .focus-dashboard-summary {
   display: grid;
@@ -524,6 +578,10 @@ h3 {
   font-size: 18px;
 }
 
+
+/* ▓▓▓▓▓▓▓▓▓▓  [components · 07]  CONDICIONES Y JERARQUÍA (LECTURA)  ▓▓▓▓▓▓▓▓▓▓
+   Lectura de condición y niveles de jerarquía. */
+
 .decision-condition-summary {
   grid-template-columns: repeat(3, minmax(0, 1fr));
   margin-bottom: 14px;
@@ -614,6 +672,10 @@ h3 {
 .condition-overview-panel .status-distribution strong {
   font-size: 16px;
 }
+
+
+/* ▓▓▓▓▓▓▓▓▓▓  [components · 08]  AYUDAS DE PRODUCTO Y ESTADÍSTICAS  ▓▓▓▓▓▓▓▓▓▓
+   Callouts de ayuda y filas de estadística. */
 
 .product-callout small {
   color: #b8c9dc;
@@ -726,6 +788,10 @@ h3 {
   font-family: var(--display-font);
   font-size: 18px;
 }
+
+
+/* ▓▓▓▓▓▓▓▓▓▓  [components · 09]  CLAVE DE CONDICIONES Y CHECKLIST DIGITAL  ▓▓▓▓▓▓▓▓▓▓
+   Leyenda de condiciones y checklist digital. */
 
 .condition-key {
   display: grid;
@@ -840,6 +906,10 @@ h3 {
   font-size: 10px;
   line-height: 1.4;
 }
+
+
+/* ▓▓▓▓▓▓▓▓▓▓  [components · 10]  PUNTAJES E INDICADORES (RESULTADOS)  ▓▓▓▓▓▓▓▓▓▓
+   Encabezados de score, filas de indicador y tarjetas de resultado. */
 
 .score-heading {
   display: flex;
@@ -994,6 +1064,10 @@ h3 {
   line-height: 1.45;
 }
 
+
+/* ▓▓▓▓▓▓▓▓▓▓  [components · 11]  TABLAS INFORMATIVAS  ▓▓▓▓▓▓▓▓▓▓
+   Tablas de solo lectura: herramientas, búsqueda y celdas. */
+
 .table-heading {
   flex-wrap: wrap;
 }
@@ -1082,6 +1156,10 @@ td small {
   font-size: 17px;
 }
 
+
+/* ▓▓▓▓▓▓▓▓▓▓  [components · 12]  ESTADOS VACÍOS Y ANALÍTICA  ▓▓▓▓▓▓▓▓▓▓
+   Empty states, badges de conteo y stack de analítica. */
+
 .analytics-stack {
   display: grid;
   gap: 14px;
@@ -1130,6 +1208,10 @@ td small {
 .count-badge {
   color: #547b28;
 }
+
+
+/* ▓▓▓▓▓▓▓▓▓▓  [components · 13]  OPERACIÓN · CAPTURA, FOCUS Y SEMÁFOROS  ▓▓▓▓▓▓▓▓▓▓
+   Bloque operativo: captura, filas Focus, porcentaje, semáforo y condición. */
 
 .operational-level-section {
   display: grid;
@@ -1579,6 +1661,10 @@ td small {
 
 /* Multi-unit REP architecture */
 
+
+/* ▓▓▓▓▓▓▓▓▓▓  [components · 14]  REP, DISTRIBUCIÓN Y RANKING  ▓▓▓▓▓▓▓▓▓▓
+   Callout REP, distribución de estatus y columnas de ranking. */
+
 .rep-callout h3 {
   color: white;
   font-family: var(--display-font);
@@ -1702,6 +1788,10 @@ td small {
   font-weight: 700;
 }
 
+
+/* ▓▓▓▓▓▓▓▓▓▓  [components · 15]  RELACIONES JERÁRQUICAS (ADMIN)  ▓▓▓▓▓▓▓▓▓▓
+   Validación, filas y tabla de relaciones jerárquicas. */
+
 .relationship-validation {
   display: grid;
   gap: 6px;
@@ -1755,6 +1845,10 @@ td small {
 }
 
 .relationship-status,
+
+/* ▓▓▓▓▓▓▓▓▓▓  [components · 16]  INDICADORES POR PUESTO (DETALLE)  ▓▓▓▓▓▓▓▓▓▓
+   Semáforo, base, posición, perfil y estatus de indicador. */
+
 .indicator-semaphore {
   display: inline-flex;
   min-height: 26px;
@@ -2000,6 +2094,10 @@ td small {
   font-weight: 900;
 }
 
+
+/* ▓▓▓▓▓▓▓▓▓▓  [components · 17]  ADMIN DE FOCUS Y ACCIONES DE RIESGO  ▓▓▓▓▓▓▓▓▓▓
+   Admin de Focus, botón de peligro y lista de unidades. */
+
 .focus-admin {
   margin-top: 14px;
 }
@@ -2079,6 +2177,10 @@ td small {
   min-height: 38px;
   color: #a94438;
 }
+
+
+/* ▓▓▓▓▓▓▓▓▓▓  [components · 18]  ESTADÍSTICA DE CONDICIÓN Y GUÍA DE OPERACIÓN  ▓▓▓▓▓▓▓▓▓▓
+   Estadística de condición y guía contextual de operación. */
 
 .condition-stat-table {
   width: 100%;
@@ -2694,6 +2796,10 @@ td small {
       }
     }
 }
+
+
+/* ▓▓▓▓▓▓▓▓▓▓  [components · 19]  CAMPOS DE DOCUMENTO Y VALIDACIÓN FOCUS  ▓▓▓▓▓▓▓▓▓▓
+   Campos de documento y validaciones del Focus diario. */
 
 .document-field > em {
   justify-self: end;

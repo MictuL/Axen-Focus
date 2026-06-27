@@ -1,4 +1,23 @@
+/* ============================================================================
+   AXEN FOCUS · PRINT.CSS
+   Formatos de impresión y reglas @media print. Controla cómo se ve la
+   HOJA IMPRESA (no la pantalla): encabezado, tabla, firmas y checklist.
+
+   Tokens de color/tipografía/espaciado: src/styles/base.css
+   ----------------------------------------------------------------------------
+   CÓMO NAVEGAR: busca el marcador  [print · NN]  para saltar a una sección.
+
+   ÍNDICE
+     [print · 01]  CONTROLES DE IMPRESIÓN Y GUÍA EN PANTALLA
+     [print · 02]  HOJA IMPRESA · ENCABEZADO, TABLA Y FIRMAS
+     [print · 03]  CHECKLIST IMPRESO, REP Y CONDICIONES
+     [print · 04]  HOJA DE OPERACIÓN EN BLANCO Y KPI IMPRESO
+   ============================================================================ */
 /* Print: printable sheets, paper layout and print media overrides. */
+
+
+/* ▓▓▓▓▓▓▓▓▓▓  [print · 01]  CONTROLES DE IMPRESIÓN Y GUÍA EN PANTALLA  ▓▓▓▓▓▓▓▓▓▓
+   Botones y guía visibles en pantalla antes de imprimir. */
 
 .hierarchy-print-header {
   display: none;
@@ -143,6 +162,10 @@
   font-size: 11px;
   line-height: 1.45;
 }
+
+
+/* ▓▓▓▓▓▓▓▓▓▓  [print · 02]  HOJA IMPRESA · ENCABEZADO, TABLA Y FIRMAS  ▓▓▓▓▓▓▓▓▓▓
+   Estructura de la hoja: header, logo, meta, tabla, contexto y firmas. */
 
 .print-sheet {
   width: 100%;
@@ -702,6 +725,10 @@
 
 .unit-portfolio-list p,
 .portfolio-note,
+
+/* ▓▓▓▓▓▓▓▓▓▓  [print · 03]  CHECKLIST IMPRESO, REP Y CONDICIONES  ▓▓▓▓▓▓▓▓▓▓
+   Checklist impreso, bloque REP y condiciones. */
+
 .print-empty p {
   margin: 4px 0 0;
   color: var(--muted);
@@ -940,6 +967,10 @@
   color: #7d8a8b;
   opacity: 1;
 }
+
+
+/* ▓▓▓▓▓▓▓▓▓▓  [print · 04]  HOJA DE OPERACIÓN EN BLANCO Y KPI IMPRESO  ▓▓▓▓▓▓▓▓▓▓
+   Hoja de operación en blanco y KPI para impresión. */
 
 .operation-sheet .print-header {
   border-bottom-color: var(--axen-blue);
