@@ -2485,6 +2485,7 @@ textarea {
       line-height: 1.35;
       -webkit-box-orient: vertical;
       -webkit-line-clamp: 2;
+      line-clamp: 2;
     }
 
   .focus-goal-auto.is-ready span {
@@ -2774,6 +2775,7 @@ textarea {
       line-height: 1.45;
       -webkit-box-orient: vertical;
       -webkit-line-clamp: 3;
+      line-clamp: 3;
     }
 
   .wizard-summary-result {
@@ -2853,6 +2855,7 @@ textarea {
 
   .evaluation-wizard-layout.is-activity-step .wizard-summary dd {
       -webkit-line-clamp: 2;
+      line-clamp: 2;
     }
 
   .evaluation-wizard-layout.is-activity-step .wizard-summary-result,
