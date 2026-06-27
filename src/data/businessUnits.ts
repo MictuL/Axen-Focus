@@ -1,6 +1,3 @@
-import { additionalBusinessUnits } from "./units/additionalEvaluationUnits";
-import { axenMindBusinessUnit } from "./units/axenMind";
-import { fundacionDanteBusinessUnit } from "./units/fundacionDante";
-import { halconesBusinessUnit } from "./units/halcones";
+import { updatedBusinessUnits } from "./units/updatedOperationalGuides";
 
-export const businessUnits = [halconesBusinessUnit, axenMindBusinessUnit, fundacionDanteBusinessUnit, ...additionalBusinessUnits];
+export const businessUnits = updatedBusinessUnits;

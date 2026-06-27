@@ -1,6 +1,5 @@
 import { FOCUS_DAILY_COLUMNS, FOCUS_DAILY_MEASUREMENT_RULE, FOCUS_DAILY_TABLE_TITLE } from "../../lib/focusDaily";
 import type { BusinessUnit, OperationFormatSet, OperationTemplate, OperationTemplateTable, Position } from "../../types";
-import { axenBrokerOperationSource } from "./axenBroker";
 import { AXEN_LIFE_UNIT_ID, focusDailyUnitSources, VITAL_XTATION_UNIT_ID, type FocusDailySourcePosition, type FocusDailyUnitSource } from "./focusDailySources";
 
 const forbiddenPositionPattern = /\b(ceo|dueno|dueño|patronato)\b/i;
@@ -66,7 +65,7 @@ function getSourcePositionsForUnit(unit: FocusDailyUnitSource, positions: Positi
 }
 
 export function getFocusDailyOperationFormats(positions: Position[]): OperationFormatSet[] {
-  return [...focusDailyUnitSources, axenBrokerOperationSource].flatMap((unit) => getSourcePositionsForUnit(unit, positions)
+  return focusDailyUnitSources.flatMap((unit) => getSourcePositionsForUnit(unit, positions)
     .filter((sourcePosition) => !isForbiddenPosition(sourcePosition.positionName))
     .map((sourcePosition) => {
       const linkedPosition = findPosition(unit.unitId, sourcePosition, positions);

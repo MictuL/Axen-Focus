@@ -1,3 +1,3 @@
-import { halconesSeedEvaluations } from "./units/halconesEvaluations";
+import type { Evaluation } from "../types";
 
-export const seedEvaluations = [...halconesSeedEvaluations];
+export const seedEvaluations: Evaluation[] = [];

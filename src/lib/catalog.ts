@@ -7,10 +7,13 @@ export const OPERATIONAL_LEVELS: OperationalLevel[] = ["Planeación", "Supervisi
 const normalizePositionName = (value: string) =>
   value.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLocaleLowerCase("es-MX");
 
-export function getOperationalLevel(position: Pick<Position, "name"> | string): OperationalLevel {
+export function getOperationalLevel(position: Pick<Position, "name"> & Partial<Pick<Position, "area">> | string): OperationalLevel {
+  if (typeof position !== "string" && OPERATIONAL_LEVELS.includes(position.area as OperationalLevel)) {
+    return position.area as OperationalLevel;
+  }
   const name = normalizePositionName(typeof position === "string" ? position : position.name);
   if (/\bdirector(?:a|es|as)?\b/.test(name)) return "Planeación";
-  if (/\bgerente(?:s)?\b/.test(name) || /\bcoordinador(?:a|es|as)?\b/.test(name) || /\bejecutivo de cuentas?\b/.test(name)) return "Supervisión";
+  if (/\bgerente(?:s)?\b/.test(name) || /\bcoordinador(?:a|es|as)?\b/.test(name) || /\bejecutivo de cuentas?\b/.test(name) || /\blider(?:es)?\b/.test(name)) return "Supervisión";
   return "Ejecución";
 }
 

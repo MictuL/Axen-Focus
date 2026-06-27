@@ -2,20 +2,11 @@ import { describe, expect, it } from "vitest";
 import * as catalog from "../data/catalog";
 import { businessUnits, operationFormats, physicalChecklistFormats, positions } from "../data/catalog";
 import { seedEvaluations } from "../data/seed";
-import { additionalBusinessUnits, additionalChecklistFormats, additionalPositions } from "../data/units/additionalEvaluationUnits";
-import { AXEN_ENERGY_UNIT_ID, AXEN_HEALTH_UNIT_ID, axenEnergyPositions, axenHealthPositions } from "../data/units/axenEnergyHealth";
-import { AXEN_BROKER_UNIT_ID, axenBrokerChecklistFormats, axenBrokerPositions } from "../data/units/axenBroker";
-import { axenLifeChecklistFormats, axenLifePositions } from "../data/units/axenLife";
-import { AXEN_MIND_UNIT_ID, axenMindPositions } from "../data/units/axenMind";
-import { axenMindChecklistFormats } from "../data/units/axenMindChecklistFormats";
-import { FUNDACION_DANTE_UNIT_ID, fundacionDantePositions } from "../data/units/fundacionDante";
-import { fundacionDanteChecklistFormats } from "../data/units/fundacionDanteChecklistFormats";
-import { AXEN_LIFE_UNIT_ID, VITAL_XTATION_UNIT_ID } from "../data/units/focusDailyOperationFormats";
-import { HALCONES_UNIT_ID, halconesPositions } from "../data/units/halcones";
 import {
-  HALCONES_FORMAT_ADMIN,
-  HALCONES_FORMAT_DIRECTIVE,
-} from "../data/units/halconesChecklistFormats";
+  FUNDACION_DANTE_UNIT_ID,
+  updatedBusinessUnits,
+  updatedGuideUnits,
+} from "../data/units/updatedOperationalGuides";
 import { getEvaluationPointSeries, getIndividualSeries, getIndividualTrendSeries, getLatestProfileTrendStates, getOverviewSeries, getTrendSeries, getUnitSummaries } from "./analytics";
 import { createPositionId, getOperationalLevel, hasOfficialKpis, isPositionReady } from "./catalog";
 import { chartAxisMaximum, withZeroBaseline } from "./chartSeries";
@@ -30,6 +21,76 @@ import { buildFundacionHierarchy, deriveUnitFocusFromDirectorHierarchy, flattenF
 import { calculateAllocatedGoalTarget, getGoalPeriodBounds, getGoalTargetBreakdown, goalAppliesToPosition, goalIsActiveOnDate, inferGoalValueKind, normalizeGoalAllocationPercent, resolveIndicatorValueKind } from "./goals";
 import { calculateIndicatorAttainmentScore, calculateWeeklyIndicatorCondition, calculateWeeklyPositionIndicatorScore, getIndicatorStatusMeta, getPositionIndicatorTrendSeries, getWeeklyIndicatorConditionMeta, normalizeIndicatorResult, normalizeIndicatorScore, normalizeWeeklyPositionIndicatorRecord } from "./positionIndicators";
 import type { DocumentRecord, Evaluation, OperationalGoalAssignment, UnitConditionReview, WeeklyPositionIndicatorEvaluation } from "../types";
+
+const fundacionDantePositions = positions.filter((position) => position.businessUnitId === FUNDACION_DANTE_UNIT_ID);
+const fundacionPosition = (slug: string) => {
+  const position = positions.find((item) => item.id === createPositionId(FUNDACION_DANTE_UNIT_ID, slug));
+  if (!position) throw new Error(`Missing Fundacion Dante position fixture: ${slug}`);
+  return position;
+};
+const baseFixturePosition = fundacionPosition("voluntariado-de-procuracion-de-fondos");
+
+function makeEvaluation(overrides: Partial<Evaluation> = {}): Evaluation {
+  const position = overrides.positionId ? positions.find((item) => item.id === overrides.positionId) ?? baseFixturePosition : baseFixturePosition;
+  const businessUnitId = overrides.businessUnitId ?? position.businessUnitId;
+  const unit = businessUnits.find((item) => item.id === businessUnitId);
+  const date = overrides.date ?? "2026-06-01";
+  const period = getEvaluationPeriod(date);
+  const finalScore = overrides.finalScore ?? 80;
+  return {
+    id: overrides.id ?? `fixture-${date}-${position.id}`,
+    businessUnitId,
+    area: overrides.area ?? position.area,
+    positionId: position.id,
+    positionName: overrides.positionName ?? position.name,
+    rep: overrides.rep ?? position.rep,
+    evaluatedPersonName: overrides.evaluatedPersonName ?? position.name,
+    evaluatorName: overrides.evaluatorName ?? "Dirección",
+    date,
+    period: overrides.period ?? period.period,
+    week: overrides.week ?? period.week,
+    month: overrides.month ?? period.month,
+    season: overrides.season ?? period.season,
+    evaluatedActivity: overrides.evaluatedActivity ?? "Actividad evaluada",
+    captureSource: overrides.captureSource ?? "Digital",
+    kpis: overrides.kpis ?? [{ name: "Cumplimiento del REP", description: "Indicador de prueba", score: Math.round(finalScore / 20) }],
+    generalComplianceScore: overrides.generalComplianceScore ?? finalScore,
+    evidenceIncidentScore: overrides.evidenceIncidentScore ?? finalScore,
+    observations: overrides.observations ?? "",
+    incidents: overrides.incidents ?? "",
+    improvementAction: overrides.improvementAction ?? "",
+    followUpDate: overrides.followUpDate ?? "",
+    statistics: overrides.statistics,
+    condition: overrides.condition,
+    conditionFormula: overrides.conditionFormula,
+    problemStatement: overrides.problemStatement,
+    dataAnalysis: overrides.dataAnalysis,
+    solutionPlan: overrides.solutionPlan,
+    nextTarget: overrides.nextTarget,
+    finalScore,
+    performanceIndex: overrides.performanceIndex,
+    focusDaily: overrides.focusDaily,
+    status: overrides.status ?? getPerformanceStatus(finalScore),
+    trend: overrides.trend ?? "Sin histórico",
+    digitalCaptureDate: overrides.digitalCaptureDate ?? date,
+    collaboratorProfileId: overrides.collaboratorProfileId,
+    documentFolio: overrides.documentFolio,
+    methodVersion: overrides.methodVersion,
+    subjectType: overrides.subjectType ?? "collaborator",
+    physicalFormatId: overrides.physicalFormatId,
+    physicalFormatCode: overrides.physicalFormatCode,
+    physicalFormatTitle: overrides.physicalFormatTitle,
+    checklistResults: overrides.checklistResults,
+    productDefinition: overrides.productDefinition,
+  };
+}
+
+const fixtureEvaluations: Evaluation[] = [
+  makeEvaluation({ id: "fixture-1", evaluatedPersonName: "Rodrigo Lara", collaboratorProfileId: "COL-RODRIGO", date: "2026-06-01", finalScore: 90, condition: "Normal", incidents: "Seguimiento comercial" }),
+  makeEvaluation({ id: "fixture-2", evaluatedPersonName: "Rodrigo Lara", collaboratorProfileId: "COL-RODRIGO", date: "2026-06-08", finalScore: 75, condition: "Peligro", incidents: "Seguimiento comercial" }),
+  makeEvaluation({ id: "fixture-3", evaluatedPersonName: "Rodrigo Lara", collaboratorProfileId: "COL-RODRIGO", date: "2026-06-15", finalScore: 45, condition: "Peligro", incidents: "Seguimiento comercial" }),
+  makeEvaluation({ id: "fixture-4", evaluatedPersonName: "Ana Pérez", collaboratorProfileId: "COL-ANA", positionId: fundacionPosition("voluntariado-de-activaciones").id, date: "2026-06-15", finalScore: 100, condition: "Normal" }),
+];
 
 describe("calculateFinalScore", () => {
   it("returns 100 when every score is rated 5", () => {
@@ -213,10 +274,10 @@ describe("product statistics and operational conditions", () => {
 
 describe("business unit score", () => {
   it("uses only the latest collaborator evaluation and ignores direct unit evaluations", () => {
-    const base = seedEvaluations[0];
+    const base = makeEvaluation({ id: "base-score", evaluatedPersonName: "Persona A", collaboratorProfileId: "COL-A" });
     const older = { ...base, id: "older", date: "2026-06-01", finalScore: 20 };
     const latest = { ...base, id: "latest", date: "2026-06-08", finalScore: 80 };
-    const secondPerson = { ...seedEvaluations[4], id: "second-person", date: "2026-06-08", finalScore: 100 };
+    const secondPerson = makeEvaluation({ id: "second-person", evaluatedPersonName: "Persona B", collaboratorProfileId: "COL-B", date: "2026-06-08", finalScore: 100 });
     const directUnit = {
       ...base,
       id: "direct-unit",
@@ -234,12 +295,12 @@ describe("business unit score", () => {
 
 describe("collaborator evaluation history", () => {
   it("returns the ordered history for the same person, unit and position through the selected date", () => {
-    const base = seedEvaluations[0];
+    const base = makeEvaluation({ id: "history-base", evaluatedPersonName: "Persona A", collaboratorProfileId: "COL-A" });
     const records = [
       { ...base, id: "history-2", date: "2026-06-08", period: "Semana 24 · Junio 2026" },
       { ...base, id: "history-1", date: "2026-06-01", period: "Semana 23 · Junio 2026" },
       { ...base, id: "future", date: "2026-06-22", period: "Semana 26 · Junio 2026" },
-      { ...base, id: "other-person", evaluatedPersonName: "Otra persona", date: "2026-06-08" },
+      { ...base, id: "other-person", evaluatedPersonName: "Otra persona", collaboratorProfileId: "COL-OTRA", date: "2026-06-08" },
     ];
 
     expect(getCollaboratorEvaluationHistory(
@@ -248,11 +309,12 @@ describe("collaborator evaluation history", () => {
       base.positionId,
       base.evaluatedPersonName.toLocaleUpperCase("es-MX"),
       "2026-06-15",
+      base.collaboratorProfileId,
     ).map((item) => item.id)).toEqual(["history-1", "history-2"]);
   });
 
   it("keeps profiles with the same display name in independent histories and trends", () => {
-    const base = seedEvaluations[0];
+    const base = makeEvaluation({ id: "profile-base", evaluatedPersonName: "Persona Compartida" });
     const records = [
       { ...base, id: "profile-a-1", collaboratorProfileId: "COL-A", date: "2026-06-01", period: "Semana 23 · Junio 2026", finalScore: 60 },
       { ...base, id: "profile-b-1", collaboratorProfileId: "COL-B", date: "2026-06-08", period: "Semana 24 · Junio 2026", finalScore: 30 },
@@ -283,9 +345,9 @@ describe("automatic periods and weekly evaluation agenda", () => {
   });
 
   it("marks a position as current only when it has an evaluation in the active week", () => {
-    const position = halconesPositions.find((item) => getOperationalLevel(item) === "Ejecución")!;
+    const position = positions.find((item) => item.businessUnitId === FUNDACION_DANTE_UNIT_ID && getOperationalLevel(item) === "Ejecución")!;
     const recent = {
-      ...seedEvaluations[0],
+      ...makeEvaluation({ id: "schedule-recent", positionId: position.id }),
       positionId: position.id,
       businessUnitId: position.businessUnitId,
       date: "2026-06-10",
@@ -306,7 +368,7 @@ describe("automatic periods and weekly evaluation agenda", () => {
   });
 
   it("returns the current dashboard to zero when the active weekly cut is reset", () => {
-    const base = seedEvaluations[0];
+    const base = makeEvaluation({ id: "current-period-base" });
     const previous = { ...base, id: "previous-cut", date: "2026-06-01", period: getEvaluationPeriod("2026-06-01").period };
     const current = { ...base, id: "current-cut", date: "2026-06-10", period: getEvaluationPeriod("2026-06-10").period };
 
@@ -316,7 +378,7 @@ describe("automatic periods and weekly evaluation agenda", () => {
 });
 
 describe("evaluation reset ranges", () => {
-  const resetEvaluation = { ...seedEvaluations[0], businessUnitId: "unit-a", date: "2026-06-10" };
+  const resetEvaluation = { ...makeEvaluation({ id: "reset-base" }), businessUnitId: "unit-a", date: "2026-06-10" };
 
   it("limits a weekly reset to Monday through Sunday", () => {
     expect(getEvaluationResetRange("week", "2026-06-10")).toEqual({
@@ -455,8 +517,8 @@ describe("evaluation reset ranges", () => {
 describe("document folios", () => {
   const baseDocument = {
     status: "digital",
-    businessUnitId: HALCONES_UNIT_ID,
-    businessUnitName: "Halcones Fútbol Club",
+    businessUnitId: FUNDACION_DANTE_UNIT_ID,
+    businessUnitName: "Fundación Dante Eludier",
     formatTitle: "Formato de prueba",
     createdAt: "2026-06-09T00:00:00.000Z",
     updatedAt: "2026-06-09T00:00:00.000Z",
@@ -720,7 +782,7 @@ describe("Focus Diario operation scoring", () => {
 
   it("keeps the full Fundacion Dante report chain targetable from Direction", () => {
     const profiles = buildPositionProfiles(fundacionDantePositions);
-    const directorProfileId = getPositionProfileId(createPositionId(FUNDACION_DANTE_UNIT_ID, "director-general"));
+    const directorProfileId = getPositionProfileId(createPositionId(FUNDACION_DANTE_UNIT_ID, "director-general-udn"));
     const hierarchy = buildFundacionHierarchy({
       businessUnitId: FUNDACION_DANTE_UNIT_ID,
       evaluations: [],
@@ -862,9 +924,8 @@ describe("trend and catalog rules", () => {
     expect(getTrend(80)).toBe("Sin histórico");
   });
 
-  it("seeds 40 historical evaluations without a people catalog", () => {
-    expect(seedEvaluations).toHaveLength(40);
-    expect(new Set(seedEvaluations.map((item) => item.evaluatedPersonName)).size).toBeGreaterThanOrEqual(5);
+  it("starts with no captured evaluations and no people catalog", () => {
+    expect(seedEvaluations).toHaveLength(0);
     expect("collaborators" in catalog).toBe(false);
     expect("people" in catalog).toBe(false);
   });
@@ -874,33 +935,30 @@ describe("trend and catalog rules", () => {
     expect(pending).toHaveLength(0);
   });
 
-  it("namespaces every Halcones position and links it only to Halcones", () => {
-    expect(halconesPositions.every((item) => item.businessUnitId === HALCONES_UNIT_ID)).toBe(true);
-    expect(halconesPositions.every((item) => item.id.startsWith(`${HALCONES_UNIT_ID}:`))).toBe(true);
-    expect(seedEvaluations.every((item) => item.businessUnitId === HALCONES_UNIT_ID)).toBe(true);
-    expect(seedEvaluations.every((item) => positions.some((position) => position.id === item.positionId))).toBe(true);
-    expect(createPositionId(HALCONES_UNIT_ID, "doctor")).toBe("halcones-futbol-club:doctor");
+  it("loads the updated business-unit catalog and removes Halcones", () => {
+    const unitIds = new Set(businessUnits.map((unit) => unit.id));
+    const forbiddenText = [
+      ...businessUnits.map((unit) => unit.name),
+      ...positions.map((position) => position.name),
+      ...physicalChecklistFormats.map((format) => format.title),
+    ].join(" ").normalize("NFD").replace(/\p{Diacritic}/gu, "").toLocaleLowerCase("es-MX");
+
+    expect(businessUnits.map((unit) => unit.name)).toEqual(updatedBusinessUnits.map((unit) => unit.name));
+    expect(businessUnits).toHaveLength(10);
+    expect(positions).toHaveLength(108);
+    expect(physicalChecklistFormats).toHaveLength(108);
+    expect(positions.every((position) => unitIds.has(position.businessUnitId))).toBe(true);
+    expect(positions.every((position) => position.id.startsWith(`${position.businessUnitId}:`))).toBe(true);
+    expect(physicalChecklistFormats.every((format) => unitIds.has(format.businessUnitId))).toBe(true);
+    expect(forbiddenText).not.toContain("halcones");
   });
 
-  it("loads the official Halcones physical checklist formats without master forms", () => {
-    const halconesFormats = physicalChecklistFormats.filter((item) => item.businessUnitId === HALCONES_UNIT_ID);
-    expect(halconesFormats).toHaveLength(4);
-    expect(halconesFormats.map((item) => item.code)).toEqual(["F-02", "F-03", "F-04", "F-05"]);
-    expect(halconesFormats.every((item) => item.checklist.length > 0)).toBe(true);
-  });
-
-  it("links every remaining Halcones position to a valid physical format", () => {
+  it("links every updated position to a valid printable checklist format", () => {
     const formatIds = new Set(physicalChecklistFormats.map((item) => item.id));
-    expect(halconesPositions).toHaveLength(26);
-    expect(halconesPositions.every(isPositionReady)).toBe(true);
-    expect(halconesPositions.every((item) => item.physicalFormatIds?.length)).toBe(true);
-    expect(halconesPositions.flatMap((item) => item.physicalFormatIds ?? []).every((id) => formatIds.has(id))).toBe(true);
-
-    const coordinator = halconesPositions.find((item) => item.id === createPositionId(HALCONES_UNIT_ID, "coordinador-administrativo"))!;
-    expect(coordinator.physicalFormatIds?.slice(0, 2)).toEqual([HALCONES_FORMAT_DIRECTIVE, HALCONES_FORMAT_ADMIN]);
-    expect(halconesPositions.some((item) => item.id === createPositionId(HALCONES_UNIT_ID, "enlace-comercial"))).toBe(false);
-    expect(halconesPositions.some((item) => item.id === createPositionId(HALCONES_UNIT_ID, "ejecutivo-mkt"))).toBe(false);
-    expect(halconesPositions.some((item) => item.id === createPositionId(HALCONES_UNIT_ID, "fuerzas-basicas"))).toBe(false);
+    expect(positions.every(isPositionReady)).toBe(true);
+    expect(positions.every((item) => item.physicalFormatIds?.length)).toBe(true);
+    expect(positions.flatMap((item) => item.physicalFormatIds ?? []).every((id) => formatIds.has(id))).toBe(true);
+    expect(physicalChecklistFormats.every((format) => format.frequency === "Semanal" && format.checklist.length > 0)).toBe(true);
   });
 
   it("does not expose or assign deprecated REP/KPI master formats", () => {
@@ -918,133 +976,37 @@ describe("trend and catalog rules", () => {
     expect(forbiddenPositionText).not.toMatch(/\b(ceo|dueno|patronato)\b/);
   });
 
-  it("adds Axen Mind as an isolated active unit with REP-ready positions and checklist formats", () => {
-    expect(businessUnits.some((unit) => unit.id === AXEN_MIND_UNIT_ID && unit.name === "Axen Mind School")).toBe(true);
-    expect(axenMindPositions).toHaveLength(19);
-    expect(axenMindPositions.every((item) => item.businessUnitId === AXEN_MIND_UNIT_ID)).toBe(true);
-    expect(axenMindPositions.every((item) => item.id.startsWith(`${AXEN_MIND_UNIT_ID}:`))).toBe(true);
-    expect(axenMindPositions.every(isPositionReady)).toBe(true);
-    expect(axenMindChecklistFormats).toHaveLength(3);
-    expect(axenMindChecklistFormats.map((item) => item.code)).toEqual(["F-02", "F-03", "F-04"]);
-  });
+  it("keeps every updated guide unit isolated with its own active positions", () => {
+    updatedGuideUnits.forEach((guideUnit) => {
+      const unitPositions = positions.filter((position) => position.businessUnitId === guideUnit.id);
+      const unitFormats = physicalChecklistFormats.filter((format) => format.businessUnitId === guideUnit.id);
 
-  it("adds Fundación Dante Eludier as an isolated active unit with real checklist sources", () => {
-    expect(businessUnits.some((unit) => unit.id === FUNDACION_DANTE_UNIT_ID && unit.name === "Fundación Dante Eludier")).toBe(true);
-    expect(fundacionDantePositions).toHaveLength(7);
-    expect(fundacionDantePositions.every((item) => item.businessUnitId === FUNDACION_DANTE_UNIT_ID)).toBe(true);
-    expect(fundacionDantePositions.every((item) => item.id.startsWith(`${FUNDACION_DANTE_UNIT_ID}:`))).toBe(true);
-    expect(fundacionDantePositions.every(isPositionReady)).toBe(true);
-    expect(fundacionDanteChecklistFormats).toHaveLength(4);
-    expect(fundacionDanteChecklistFormats.map((item) => item.code)).toEqual(["F-02", "F-03", "F-04", "F-05"]);
-    expect(fundacionDanteChecklistFormats.every((item) => item.checklist.length > 0)).toBe(true);
-    expect(fundacionDantePositions.some((item) => item.id === createPositionId(FUNDACION_DANTE_UNIT_ID, "patronato"))).toBe(false);
-    expect(fundacionDantePositions.some((item) => item.id === createPositionId(FUNDACION_DANTE_UNIT_ID, "enlace-comercial"))).toBe(false);
-  });
-
-  it("adds the new evaluation-document business units and Focus Diario-only units", () => {
-    expect(businessUnits).toHaveLength(11);
-    expect(additionalBusinessUnits.map((unit) => unit.name)).toEqual(["Axen Energy", "Axen Health", "Axen Work", "Axen Up", "Marca Dante Eludier", "Axen Broker", "Axen Life", "Vital Xtation"]);
-    expect(additionalChecklistFormats).toHaveLength(42);
-    expect(additionalChecklistFormats.every((format) => format.code !== "F-01" && format.checklist.length > 0)).toBe(true);
-    expect(additionalPositions).toHaveLength(78);
-    expect(additionalPositions.filter(isPositionReady).every((position) => position.physicalFormatIds?.length)).toBe(true);
-    expect(axenEnergyPositions).toHaveLength(10);
-    expect(axenHealthPositions).toHaveLength(10);
-    expect(axenEnergyPositions.map((position) => position.name)).toEqual([
-      "Director General UDN",
-      "Gerente de Productos",
-      "Coordinador de Alianzas",
-      "Coordinador B2B",
-      "Coordinador B2C",
-      "Ejecutivo de Cuentas de Finanzas",
-      "Coordinador de Investigación y Desarrollo",
-      "Gerente Operativo",
-      "Servicio al Cliente",
-      "Coordinador de Mantenimiento y Corrección",
-    ]);
-    expect(axenHealthPositions.map((position) => position.name)).toEqual([
-      "Director General UDN",
-      "Gerente Administrativo",
-      "Gerente Operativo",
-      "Servicio al Cliente",
-      "Host",
-      "Ejecutivo de Cuentas de Finanzas",
-      "Coordinador de Servicios de Producción",
-      "Coordinador de Producción",
-      "Coach Interno",
-      "Especialista Externo",
-    ]);
-    expect(businessUnits.find((unit) => unit.id === AXEN_BROKER_UNIT_ID)?.observations).toContain("guia_operativa_BROKER_V001 (1).pdf");
-    expect(businessUnits.find((unit) => unit.id === AXEN_LIFE_UNIT_ID)?.observations).toContain("Focus_Diario_Axen_Life.docx");
-    expect(businessUnits.find((unit) => unit.id === VITAL_XTATION_UNIT_ID)?.observations).toContain("Focus_Diario_Vital_Xtation.docx");
-  });
-
-  it("adds only Axen Broker positions with official REP and KPIs", () => {
-    const ready = axenBrokerPositions.filter(isPositionReady);
-    const forbiddenPositionText = axenBrokerPositions.map((position) => position.name).join(" ").normalize("NFD").replace(/\p{Diacritic}/gu, "").toLocaleLowerCase("es-MX");
-
-    expect(axenBrokerPositions).toHaveLength(15);
-    expect(axenBrokerPositions.every((position) => position.businessUnitId === AXEN_BROKER_UNIT_ID)).toBe(true);
-    expect(axenBrokerPositions.every((position) => position.id.startsWith(`${AXEN_BROKER_UNIT_ID}:`))).toBe(true);
-    expect(ready).toHaveLength(15);
-    expect(ready.every((position) => position.kpis.length === 3 && position.physicalFormatIds?.length === 1)).toBe(true);
-    expect(axenBrokerPositions.some((position) => ["Ejecutivo de Cuenta MKT", "Enlace Comercial", "Enlace Legal"].includes(position.name))).toBe(false);
-    expect(axenBrokerChecklistFormats).toHaveLength(15);
-    expect(axenBrokerChecklistFormats.every((format) => format.frequency === "Semanal" && format.checklist.length === 3)).toBe(true);
-    expect(forbiddenPositionText).not.toMatch(/\b(ceo|dueno|patronato)\b/);
-  });
-
-  it("adds only Axen Life positions with official REP and KPIs", () => {
-    const ready = axenLifePositions.filter(isPositionReady);
-    const forbiddenPositionText = axenLifePositions.map((position) => position.name).join(" ").normalize("NFD").replace(/\p{Diacritic}/gu, "").toLocaleLowerCase("es-MX");
-
-    expect(axenLifePositions).toHaveLength(14);
-    expect(axenLifePositions.every((position) => position.businessUnitId === AXEN_LIFE_UNIT_ID)).toBe(true);
-    expect(axenLifePositions.every((position) => position.id.startsWith(`${AXEN_LIFE_UNIT_ID}:`))).toBe(true);
-    expect(ready).toHaveLength(14);
-    expect(ready.every((position) => position.kpis.length === 3 && position.physicalFormatIds?.length === 1)).toBe(true);
-    expect(axenLifeChecklistFormats).toHaveLength(14);
-    expect(axenLifeChecklistFormats.every((format) => format.frequency === "Semanal" && format.checklist.length === 3)).toBe(true);
-    expect(axenLifePositions.some((position) => position.name === "Director General UDN")).toBe(true);
-    expect(axenLifePositions.some((position) => position.name === "Gerente de Atención al Cliente")).toBe(false);
-    expect(forbiddenPositionText).not.toMatch(/\b(ceo|dueno|patronato)\b/);
+      expect(unitPositions.map((position) => position.name), guideUnit.name).toEqual(guideUnit.positions.map((position) => position.name));
+      expect(unitFormats, guideUnit.name).toHaveLength(unitPositions.length);
+      expect(unitPositions.every((position) => position.status === "active"), guideUnit.name).toBe(true);
+      expect(unitPositions.every(isPositionReady), guideUnit.name).toBe(true);
+    });
   });
 
   it("loads Focus Diario operation formats independently by unit and links them to valid positions when applicable", () => {
     const positionIds = new Set(positions.map((item) => item.id));
-    const halconesOperationFormats = operationFormats.filter((item) => item.businessUnitId === HALCONES_UNIT_ID);
-    const axenMindOperationFormats = operationFormats.filter((item) => item.businessUnitId === AXEN_MIND_UNIT_ID);
-    const fundacionDanteOperationFormats = operationFormats.filter((item) => item.businessUnitId === FUNDACION_DANTE_UNIT_ID);
-    const axenEnergyOperationFormats = operationFormats.filter((item) => item.businessUnitId === AXEN_ENERGY_UNIT_ID);
-    const axenHealthOperationFormats = operationFormats.filter((item) => item.businessUnitId === AXEN_HEALTH_UNIT_ID);
-    const axenBrokerOperationFormats = operationFormats.filter((item) => item.businessUnitId === AXEN_BROKER_UNIT_ID);
-    const axenLifeOperationFormats = operationFormats.filter((item) => item.businessUnitId === AXEN_LIFE_UNIT_ID);
-    const vitalXtationOperationFormats = operationFormats.filter((item) => item.businessUnitId === VITAL_XTATION_UNIT_ID);
+    const operationCountsByUnit = new Map<string, number>();
+    operationFormats.forEach((format) => operationCountsByUnit.set(format.businessUnitId, (operationCountsByUnit.get(format.businessUnitId) ?? 0) + 1));
 
-    expect(operationFormats).toHaveLength(143);
-    expect(halconesOperationFormats).toHaveLength(26);
-    expect(axenMindOperationFormats).toHaveLength(17);
-    expect(fundacionDanteOperationFormats).toHaveLength(7);
-    expect(axenEnergyOperationFormats).toHaveLength(10);
-    expect(axenHealthOperationFormats).toHaveLength(10);
-    expect(axenBrokerOperationFormats).toHaveLength(15);
-    expect(axenLifeOperationFormats).toHaveLength(14);
-    expect(vitalXtationOperationFormats).toHaveLength(14);
+    expect(operationFormats).toHaveLength(positions.length);
+    updatedGuideUnits.forEach((unit) => {
+      expect(operationCountsByUnit.get(unit.id), unit.name).toBe(unit.positions.length);
+    });
     expect(operationFormats.every((item) => item.formats.length === 1)).toBe(true);
     expect(operationFormats.every((item) => item.formats.every((format) => format.keyArea === "Focus diario" && format.format === "Focus Diario"))).toBe(true);
     expect(operationFormats.every((item) => item.formats.every((format) => format.template?.scoreSource === "focus-daily"))).toBe(true);
     expect(operationFormats.every((item) => item.formats.every((format) => format.template?.summaryFields?.includes("Semáforo general")))).toBe(true);
     expect(operationFormats.every((item) => item.formats.every((format) => Boolean(format.template?.sourceFile)))).toBe(true);
     expect(operationFormats.filter((item) => item.positionId).every((item) => positionIds.has(item.positionId!))).toBe(true);
-    expect(halconesOperationFormats[0]?.positionName).toBe("Director General UDN");
     expect(operationFormats.some((item) => item.positionName === "Dueño")).toBe(false);
     expect(operationFormats.some((item) => item.positionName.toLocaleLowerCase("es-MX").includes("patronato"))).toBe(false);
     expect(operationFormats.some((item) => item.positionName.toLocaleLowerCase("es-MX").includes("ceo"))).toBe(false);
-    expect(axenLifeOperationFormats.every((item) => item.positionId && positionIds.has(item.positionId))).toBe(true);
-    expect(axenEnergyOperationFormats.every((item) => item.positionId && positionIds.has(item.positionId))).toBe(true);
-    expect(axenHealthOperationFormats.every((item) => item.positionId && positionIds.has(item.positionId))).toBe(true);
-    expect(axenBrokerOperationFormats.every((item) => item.positionId && positionIds.has(item.positionId))).toBe(true);
-    expect(vitalXtationOperationFormats.every((item) => !item.positionId)).toBe(true);
+    expect(operationFormats.every((item) => item.positionId && positionIds.has(item.positionId))).toBe(true);
   });
 
   it("keeps digital capture aligned to printable checklist sources by unit and position", () => {
@@ -1073,21 +1035,21 @@ describe("chart series", () => {
   });
 
   it("keeps equal period labels from different seasons as separate points", () => {
-    const first = seedEvaluations[0];
+    const first = makeEvaluation({ id: "chart-first", date: "2026-03-10", period: "Semana 10 · Marzo 2026" });
     const future = { ...first, id: "future", date: "2027-03-10", season: "2027 Apertura", finalScore: 50 };
     expect(getOverviewSeries([first, future])).toHaveLength(2);
   });
 
   it("updates the overview series when a new evaluation is registered", () => {
-    const current = getOverviewSeries(seedEvaluations);
-    const latest = seedEvaluations.at(-1)!;
+    const current = getOverviewSeries(fixtureEvaluations);
+    const latest = fixtureEvaluations.at(-1)!;
     const added = { ...latest, id: "added", finalScore: 0 };
-    const updated = getOverviewSeries([...seedEvaluations, added]);
+    const updated = getOverviewSeries([...fixtureEvaluations, added]);
     expect(updated.at(-1)!.score).not.toBe(current.at(-1)!.score);
   });
 
   it("recalculates the trend independently for weekly, monthly and annual views", () => {
-    const base = seedEvaluations[0];
+    const base = makeEvaluation({ id: "trend-base" });
     const points = [
       { ...base, id: "trend-1", date: "2026-01-05", period: "Semana 2 · Enero 2026", finalScore: 50 },
       { ...base, id: "trend-2", date: "2026-01-12", period: "Semana 3 · Enero 2026", finalScore: 55 },
@@ -1100,7 +1062,7 @@ describe("chart series", () => {
   });
 
   it("counts peak streaks at 100 before moving from Afluencia to Poder", () => {
-    const base = seedEvaluations[0];
+    const base = makeEvaluation({ id: "recovery-base" });
     const points = [
       { ...base, id: "recovery-1", date: "2026-06-08", finalScore: 60 },
       { ...base, id: "recovery-2", date: "2026-06-15", finalScore: 100 },
@@ -1112,7 +1074,7 @@ describe("chart series", () => {
   });
 
   it("keeps over-target production visible in the trend index", () => {
-    const base = seedEvaluations[0];
+    const base = makeEvaluation({ id: "index-base" });
     const points = [
       { ...base, id: "index-1", date: "2026-06-08", finalScore: 100, performanceIndex: 100 },
       { ...base, id: "index-2", date: "2026-06-15", finalScore: 100, performanceIndex: 135 },
@@ -1122,7 +1084,7 @@ describe("chart series", () => {
   });
 
   it("counts the latest recalculated condition for each profile", () => {
-    const base = seedEvaluations[0];
+    const base = makeEvaluation({ id: "state-base" });
     const points = [
       { ...base, id: "state-1", collaboratorProfileId: "PROFILE-1", date: "2026-06-08", finalScore: 60, performanceIndex: 60 },
       { ...base, id: "state-2", collaboratorProfileId: "PROFILE-1", date: "2026-06-15", finalScore: 100, performanceIndex: 100 },
@@ -1133,32 +1095,30 @@ describe("chart series", () => {
   });
 
   it("keeps each captured evaluation as a visible point in the individual dashboard unit mode", () => {
-    const first = seedEvaluations[0];
-    const second = { ...seedEvaluations[1], id: "same-period", date: first.date, period: first.period };
+    const first = makeEvaluation({ id: "point-1", finalScore: 60 });
+    const second = { ...makeEvaluation({ id: "point-2", finalScore: 90 }), date: first.date, period: first.period };
     const points = getEvaluationPointSeries([first, second]);
     expect(points).toHaveLength(2);
     expect(points.map((item) => item.score)).toEqual([first.finalScore, second.finalScore]);
   });
 
   it("compares a person only with peers from the same unit, position and period", () => {
-    const sergio = seedEvaluations.find((item) => item.evaluatedPersonName === "Sergio Valdés")!;
+    const sergio = makeEvaluation({ id: "sergio", evaluatedPersonName: "Sergio Valdés", finalScore: 84 });
     const otherUnit = { ...sergio, id: "other-unit", businessUnitId: "another-unit", evaluatedPersonName: "Persona Externa", finalScore: 0 };
     expect(getIndividualSeries([sergio, otherUnit], "Sergio Valdés")[0].positionAverage).toBe(sergio.finalScore);
   });
 
-  it("summarizes a one-unit portfolio without requiring additional units", () => {
+  it("summarizes the updated portfolio without requiring seed records", () => {
     const summaries = getUnitSummaries(businessUnits, positions, seedEvaluations);
-    expect(summaries).toHaveLength(11);
-    expect(summaries.find((item) => item.name === "Halcones Fútbol Club")?.evaluationCount).toBe(40);
-    expect(summaries.find((item) => item.name === "Axen Mind School")?.evaluationCount).toBe(0);
-    expect(summaries.find((item) => item.name === "Fundación Dante Eludier")?.evaluationCount).toBe(0);
-    expect(additionalBusinessUnits.every((unit) => summaries.find((item) => item.id === unit.id)?.evaluationCount === 0)).toBe(true);
+    expect(summaries).toHaveLength(10);
+    expect(summaries.every((item) => item.evaluationCount === 0)).toBe(true);
+    expect(summaries.some((item) => item.name === "Halcones Fútbol Club")).toBe(false);
   });
 });
 
 describe("getAlerts", () => {
   it("detects low scores, declines, repeated incidences and missing catalog definitions", () => {
-    const alerts = getAlerts(seedEvaluations, positions, businessUnits);
+    const alerts = getAlerts(fixtureEvaluations, positions, businessUnits);
     expect(alerts.some((alert) => alert.alertType === "low-score" && alert.evaluatedPersonName === "Rodrigo Lara")).toBe(true);
     expect(alerts.some((alert) => alert.alertType === "decline" && alert.evaluatedPersonName === "Rodrigo Lara")).toBe(true);
     expect(alerts.some((alert) => alert.alertType === "repeated-incidence" && alert.evaluatedPersonName === "Rodrigo Lara")).toBe(true);
@@ -1168,8 +1128,8 @@ describe("getAlerts", () => {
 
 describe("focus consolidation architecture", () => {
   it("propagates a collaborator focus trend through the fundacion hierarchy", () => {
-    const coordinatorPosition = fundacionDantePositions.find((position) => position.id.endsWith("coordinador-procuracion-fondos"))!;
-    const volunteerPosition = fundacionDantePositions.find((position) => position.id.endsWith("voluntariado-procuracion-fondos"))!;
+    const coordinatorPosition = fundacionPosition("coordinador-de-procuracion-de-fondos");
+    const volunteerPosition = fundacionPosition("voluntariado-de-procuracion-de-fondos");
     const coordinatorProfileId = getPositionProfileId(coordinatorPosition.id);
     const volunteerProfileId = getPositionProfileId(volunteerPosition.id);
     const profiles = [coordinatorPosition, volunteerPosition].map((position) => ({
@@ -1182,7 +1142,7 @@ describe("focus consolidation architecture", () => {
       updatedAt: "2026-06-18",
     }));
     const focusEvaluation = (id: string, date: string, score: number, condition: NonNullable<Evaluation["focusDaily"]>["trendCondition"]): Evaluation => ({
-      ...seedEvaluations[0],
+      ...makeEvaluation({ id: `${id}-base`, positionId: volunteerPosition.id }),
       id,
       businessUnitId: FUNDACION_DANTE_UNIT_ID,
       area: volunteerPosition.area,
@@ -1233,9 +1193,9 @@ describe("focus consolidation architecture", () => {
   });
 
   it("keeps the unit focus condition separate from the coordinator condition", () => {
-    const directorPosition = fundacionDantePositions.find((position) => position.id.endsWith("director-general"))!;
-    const coordinatorPosition = fundacionDantePositions.find((position) => position.id.endsWith("coordinador-procuracion-fondos"))!;
-    const volunteerPosition = fundacionDantePositions.find((position) => position.id.endsWith("voluntariado-procuracion-fondos"))!;
+    const directorPosition = fundacionPosition("director-general-udn");
+    const coordinatorPosition = fundacionPosition("coordinador-de-procuracion-de-fondos");
+    const volunteerPosition = fundacionPosition("voluntariado-de-procuracion-de-fondos");
     const directorProfileId = getPositionProfileId(directorPosition.id);
     const coordinatorProfileId = getPositionProfileId(coordinatorPosition.id);
     const volunteerProfileId = getPositionProfileId(volunteerPosition.id);
@@ -1256,7 +1216,7 @@ describe("focus consolidation architecture", () => {
       score: number,
       condition: NonNullable<Evaluation["focusDaily"]>["trendCondition"],
     ): Evaluation => ({
-      ...seedEvaluations[0],
+      ...makeEvaluation({ id: `${id}-base`, positionId: position.id }),
       id,
       businessUnitId: FUNDACION_DANTE_UNIT_ID,
       area: position.area,
