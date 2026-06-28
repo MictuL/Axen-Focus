@@ -84,7 +84,7 @@
      --muted     Texto secundario / ayudas / placeholders. */
   --ink: #14213d;
   --ink-deep: #061a33;
-  --muted: #65758b;
+  --muted: #4c5d73;
 
   /* ── 4. COLOR · SUPERFICIES ─────────────────────────────────────────────
      Fondos de los contenedores. De más blanco a más teñido.
@@ -103,7 +103,7 @@
      --line           Borde y separador estándar (el más usado de la app).
      --surface-border  Borde de tarjetas elevadas (mismo tono, alias claro). */
   --line: #d8e4ef;
-  --surface-border: #d9e5ef;
+  --surface-border: #d8e4ef;
 
   /* ── 6. COLOR · ESTADO / SEMÁNTICA ──────────────────────────────────────
      Colores que comunican significado. Se usan en semáforos, badges de
@@ -171,7 +171,7 @@ body {
   :root {
     /* ── 8. RADIOS — esquinas redondeadas ── */
     --radius-sm: 6px;   /* inputs, chips, botones pequeños */
-    --radius-md: 8px;   /* tarjetas y paneles */
+    --radius-md: 12px;  /* tarjetas y paneles */
 
     /* ── 9. CONTROLES — dimensiones de inputs/botones ── */
     --control-height: 42px;        /* alto de inputs y botones estándar */
@@ -184,6 +184,11 @@ body {
 
     /* ── 11. MOVIMIENTO — curva de salida estándar ── */
     --ease-out: cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+
+  .hl {
+    padding: 0 2px;
+    background: linear-gradient(180deg, transparent 60%, #bfe3ff 60%);
   }
 
   /* Fondo degradado suave de la app (solo en pantalla). */
@@ -222,6 +227,15 @@ body {
       animation-duration: 1ms !important;
       scroll-behavior: auto !important;
       transition-duration: 1ms !important;
+    }
+
+    .home-module-card:hover,
+    .workflow-entry-grid article:hover,
+    .kpi-card:hover,
+    .primary-button:hover:not(:disabled),
+    .primary-button:active:not(:disabled) {
+      filter: none !important;
+      transform: none !important;
     }
   }
 }

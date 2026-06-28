@@ -488,6 +488,7 @@ function GeneralHome({
   const activePositionObjective = activePositionSource?.objective?.trim() || "Objetivo pendiente de definir en Administración.";
   const activePositionRep = activePosition?.rep?.trim() || "REP pendiente de definir.";
   const activePositionProduct = activePosition?.rep?.trim() || "Producto pendiente de definir.";
+  const repMatchesProduct = normalizeLookupValue(activePositionRep) === normalizeLookupValue(activePositionProduct);
   const hasSupervision = positions.some((position) =>
     selectedUnit
     && position.businessUnitId === selectedUnit.id
@@ -505,18 +506,47 @@ function GeneralHome({
     <section className="home-command">
       <div className="home-command-copy">
         <p className="eyebrow">Centro de información organizacional</p>
-        <h1>{canSeeTeam ? "Dirigir con datos claros." : "Tu perfil operativo."}</h1>
+        <h1>{canSeeTeam ? <>Dirigir con <span className="hl">datos claros</span>.</> : <>Tu perfil <span className="hl">operativo</span>.</>}</h1>
         <p>{canSeeTeam
-          ? "Elige el módulo de trabajo: captura Focus, administra indicadores, revisa seguimiento o consulta registros."
-          : "Accede a tu Focus Diario, consulta tu condición actual y revisa tus registros sin módulos que no corresponden."}</p>
+          ? "¿Qué necesitas hacer hoy? Captura Focus, administra indicadores, revisa seguimiento o consulta registros."
+          : "¿Qué necesitas hacer hoy? Captura tu Focus, consulta tu condición actual o revisa tus registros."}</p>
       </div>
       <div className="home-command-control">
-        {access?.mode === "master" ? <UnitSelector selectedUnitId={selectedUnit?.id ?? ""} setSelectedUnitId={setSelectedUnitId} units={units} /> : <div className="home-unit-context"><span>Acceso activo</span><strong>{access?.displayName}</strong><p>{labelForAccess(access, positions)}</p></div>}
-        <div className="home-unit-context">
-          <span>Contexto activo</span>
-          <strong>{selectedUnit?.name ?? "Sin unidad"}</strong>
-          <p>{selectedUnit?.description}</p>
+        <div className="home-context-strip" aria-label="Contexto de acceso">
+          <div className="home-context-item">
+            <span>Acceso</span>
+            <strong>{access?.displayName ?? "Sin sesión"}</strong>
+            <p>{labelForAccess(access, positions)}</p>
+          </div>
+          <div className="home-context-item is-selector">
+            {access?.mode === "master" ? <UnitSelector selectedUnitId={selectedUnit?.id ?? ""} setSelectedUnitId={setSelectedUnitId} units={units} /> : <>
+              <span>Unidad</span>
+              <strong>{selectedUnit?.name ?? "Sin unidad"}</strong>
+              <p>{selectedUnit?.description}</p>
+            </>}
+          </div>
+          <div className="home-context-item">
+            <span>Periodo</span>
+            <strong>{formatDisplayDate(todayIsoDate())}</strong>
+            <p>Fecha activa</p>
+          </div>
         </div>
+      </div>
+    </section>
+
+    <section className="workflow-entry">
+      <div className="section-intro">
+        <div><p className="eyebrow">Proceso principal</p><h2>¿Qué necesitas hacer <span className="hl">hoy</span>?</h2></div>
+        <p>Elige una acción principal. Cada módulo corresponde a una etapa distinta del control operativo.</p>
+      </div>
+      <div className={`workflow-entry-grid${workflow.length >= 4 ? " has-four-items" : ""}`}>
+        {workflow.map((item) => <article className={item.number === "01" ? "home-module-card is-primary" : "home-module-card"} key={item.number}>
+          <div className="workflow-card-number">{item.number}</div>
+          <div className="workflow-card-icon"><Icon name={item.icon} size={18} /></div>
+          <h3>{item.title}</h3>
+          <p>{item.copy}</p>
+          <button className={item.number === "01" ? "primary-button" : "secondary-button"} onClick={() => onOpenView(item.view)} type="button">{item.action}</button>
+        </article>)}
       </div>
     </section>
 
@@ -528,37 +558,27 @@ function GeneralHome({
         </div>
         <span>{getOperationalLevel(activePosition)} · {activePosition.area}</span>
       </div>
-      <div className="position-brief-grid">
+      <div className={`position-brief-grid${repMatchesProduct ? " is-merged" : ""}`}>
         <article>
           <span>Objetivo</span>
           <p>{activePositionObjective}</p>
         </article>
-        <article>
-          <span>REP</span>
+        {repMatchesProduct ? <article>
+          <span>REP / Producto a entregar</span>
           <p>{activePositionRep}</p>
-        </article>
-        <article>
-          <span>Producto a entregar</span>
-          <p>{activePositionProduct}</p>
-        </article>
+          <small>En este puesto coinciden.</small>
+        </article> : <>
+          <article>
+            <span>REP</span>
+            <p>{activePositionRep}</p>
+          </article>
+          <article>
+            <span>Producto a entregar</span>
+            <p>{activePositionProduct}</p>
+          </article>
+        </>}
       </div>
     </section> : null}
-
-    <section className="workflow-entry">
-      <div className="section-intro">
-        <div><p className="eyebrow">Proceso principal</p><h2>¿Qué necesitas hacer?</h2></div>
-        <p>Cada módulo corresponde a una etapa distinta. No necesitas saltar entre pantallas para completar una misma tarea.</p>
-      </div>
-      <div className={`workflow-entry-grid${workflow.length >= 4 ? " has-four-items" : ""}`}>
-        {workflow.map((item) => <article className={item.number === "01" ? "is-primary" : ""} key={item.number}>
-          <div className="workflow-card-number">{item.number}</div>
-          <div className="workflow-card-icon"><Icon name={item.icon} size={18} /></div>
-          <h3>{item.title}</h3>
-          <p>{item.copy}</p>
-          <button className={item.number === "01" ? "primary-button" : "secondary-button"} onClick={() => onOpenView(item.view)} type="button">{item.action}</button>
-        </article>)}
-      </div>
-    </section>
 
     {!canSeeTeam ? <PersonalConditionSnapshot access={access} evaluations={evaluations} focusSettings={focusSettings} onEvaluate={() => onOpenView("evaluate")} onFollowup={() => onOpenView("followup")} positions={positions} selectedUnit={selectedUnit} /> : null}
   </>;
